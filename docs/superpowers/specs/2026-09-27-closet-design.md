@@ -34,7 +34,7 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 
 - Palette: page `#ffffff`, text `#1f1b18`, muted text `#756c66`, photo backdrop `#f5f2ee`, hairlines `#ebe6e1`, accent terracotta `#e07a5f`. Filled buttons use a deeper terracotta `#c9644a` so white text on them stays readable; the soft tint `#fbe3d8` marks wishlist badges.
 - Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Sentence case everywhere; no all-caps labels.
-- Product cards: every item photo sits in the same 3:4 portrait frame on the photo backdrop, shown whole (`object-fit: contain`) so nothing is cropped and differing AI-generated backgrounds are softened. Cards have no border or shadow; the frame has 8px corners. Badges ("Traditional", "wishlist") sit in the photo's top-left corner.
+- Product cards: every item photo sits in the same 3:4 portrait frame, shown whole (`object-fit: contain`) so nothing is cropped or stretched. The frame is filled with the photo's own background color (see Photos), so every card reads as one uniform photo whatever the original's shape; photos with transparent edges sit on the photo backdrop instead. Every other place a photo appears (builder rows, accessory thumbnails, outfit cards) fills its frame the same way. Cards have no border or shadow; the frame has 8px corners. Badges ("Traditional", "wishlist") sit in the photo's top-left corner.
 - Controls: buttons and filter chips are fully rounded; inputs and photos use 8px corners.
 - One accent only, used for primary buttons, the selected chip and tab, and the add button.
 - UI components come from Mantine, themed once with these values.
@@ -142,6 +142,7 @@ interface Photo {
   id: string;
   full: Blob;            // long edge ≤ 1200px, WebP (JPEG fallback)
   thumb: Blob;           // long edge ≤ 400px, used in grids and rows
+  backdrop: string | null; // '#rrggbb' sampled from the photo's edges; null when the edges are transparent
 }
 
 interface Outfit {
@@ -169,6 +170,7 @@ Rules:
 ## 7. Photos
 
 - On upload the app decodes the image, scales it to a 1200px long edge for `full` and 400px for `thumb`, and encodes both as WebP (quality ~0.85), falling back to JPEG where WebP encoding is unavailable.
+- On upload the app also samples the outermost pixels of the image and stores their average color as `backdrop`, which fills the space around the photo wherever it is shown. If the edges are mostly transparent, `backdrop` is `null` and the photo backdrop color is used.
 - The original upload is not stored (the owner keeps it in their gallery).
 - Grids and builder rows use `thumb`; detail views use `full`.
 - Object URLs are created on demand and revoked when no longer shown.
