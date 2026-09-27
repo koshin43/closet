@@ -25,16 +25,17 @@
 - Do not create pass-through wrappers, generic repository layers, service locators, registries, event buses, plugin systems, or generic `Base*` components.
 - Do not create `utils.ts`, `helpers.ts`, `common.ts`, `misc.ts`, `lib/`, or generic `manager.ts` dumping grounds.
 - Do not duplicate types, validation rules, palette values, or slot and style lists. Each has one owner.
-- Use the browser platform and React when sufficient. Prefer native elements, CSS, `crypto.randomUUID()`, `createImageBitmap`, and canvas over libraries.
+- Build the UI from Mantine components. Do not hand-roll a control, layout primitive, carousel, or overlay that Mantine already provides.
+- Beyond the UI, use the browser platform: `crypto.randomUUID()`, `createImageBitmap`, and canvas over libraries.
 - Components own their local state with React state and hooks. Do not add a global state library, context-as-store, or reducers for data that already lives in IndexedDB; read it with `useLiveQuery`.
 - Catch errors only at real boundaries (file decoding, storage calls, the top-level error boundary). Never silently guess or continue with corrupted state.
 
 ### Dependency Budget
 
-Runtime: `react`, `react-dom`, `react-router`, `dexie`, `dexie-react-hooks`.
-Build and test: `typescript`, `vite`, `vite-plugin-pwa`, `vitest`, `@testing-library/react`, `@testing-library/user-event`, `jsdom`, `fake-indexeddb`, `eslint`.
+Runtime: `react`, `react-dom`, `react-router`, `dexie`, `dexie-react-hooks`, `@mantine/core`, `@mantine/hooks`, `@mantine/carousel`, `embla-carousel`, `embla-carousel-react`.
+Build and test: `typescript`, `@types/react`, `@types/react-dom`, `@types/node` (test setup only), `vite`, `vite-plugin-pwa`, `vitest`, `@testing-library/react`, `@testing-library/dom`, `@testing-library/user-event`, `jsdom`, `fake-indexeddb`, `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`.
 
-Adding any other dependency requires a stated reason tied to a spec requirement. No UI kits, CSS frameworks, animation libraries, form libraries, date libraries, or state managers.
+Adding any other dependency requires a stated reason tied to a spec requirement. Mantine is the only UI kit. No other UI kits, CSS frameworks, animation libraries, form libraries, date libraries, or state managers, including other `@mantine/*` packages unless the spec requires them.
 
 ## Fixed Product Boundary
 
@@ -53,7 +54,7 @@ src/
 ├── items/      Item model and validation, persistence, Closet and Wishlist screens, add, bulk add, item detail
 ├── outfits/    Outfit model and validation, persistence, outfit builder, Outfits screens
 ├── photos/     resize and encode, Photo persistence, displaying stored photos
-├── app/        routes, navigation shell, theme CSS variables
+├── app/        routes, navigation shell, Mantine theme
 ├── db.ts       the single Dexie database declaration
 └── main.tsx    the only composition root
 ```
@@ -65,7 +66,8 @@ Rules:
 - Dependency direction: `outfits` → `items` → `photos`. `photos` imports no feature. `app` composes features and is imported by none.
 - Wishlist is a flag on items, not a separate feature or store.
 - `db.ts` declares the database and nothing else. Only feature persistence modules touch its tables.
-- Theme values (colors, radii) are defined once as CSS variables in `app/`. Components use the variables, never literal palette values.
+- Theme values (colors, radii, fonts) are defined once in the Mantine theme in `app/`. Components use Mantine props and theme variables, never literal palette values.
+- Custom CSS is limited to layout Mantine cannot express, lives beside the component that needs it, and uses Mantine theme variables.
 - Filenames describe one concrete capability. Components use `PascalCase.tsx`; other modules use `camelCase.ts`.
 
 ## Storage Rules
