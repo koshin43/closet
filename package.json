@@ -12,8 +12,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@mantine/carousel": "^9.6.3",
+    "@mantine/core": "^9.6.3",
+    "@mantine/hooks": "^9.6.3",
     "dexie": "^4.4.6",
     "dexie-react-hooks": "^4.4.0",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router": "^7.18.4"

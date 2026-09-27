@@ -1,8 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import type { Item } from '../items';
-import { StoredPhoto } from '../photos';
-
-const SETTLE_MS = 120;
+import { Carousel } from '@mantine/carousel';
+import { Center, Group, Stack, Text } from '@mantine/core';
+import type { EmblaCarouselType } from 'embla-carousel';
+import { useEffect, useState, type ReactNode } from 'react';
+import { ItemCard, type Item } from '../items';
+import { PhotoFrame } from '../photos';
 
 interface Props {
   label: string;
@@ -16,75 +17,49 @@ interface Props {
 export function SwipeRow({ label, options, value, onChange, tall = false, action }: Props) {
   const positions = [null, ...options.map((item) => item.id)];
   const index = Math.max(0, positions.indexOf(value));
-  const scroller = useRef<HTMLDivElement>(null);
-  const settle = useRef<number | undefined>(undefined);
+  const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
+  const ratio = tall ? 3 / 4 : 1;
 
   useEffect(() => {
-    const el = scroller.current;
-    const card = el?.children[index];
-    if (!el || !(card instanceof HTMLElement)) return;
-    el.scrollTo({ left: card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2, behavior: 'smooth' });
-  }, [index, positions.length]);
-
-  useEffect(() => () => window.clearTimeout(settle.current), []);
-
-  function onScroll() {
-    window.clearTimeout(settle.current);
-    settle.current = window.setTimeout(() => {
-      const el = scroller.current;
-      if (!el) return;
-      const center = el.scrollLeft + el.clientWidth / 2;
-      const cards = [...el.children] as HTMLElement[];
-      const nearest = cards.reduce(
-        (best, card, i) =>
-          Math.abs(card.offsetLeft + card.offsetWidth / 2 - center) <
-          Math.abs(cards[best]!.offsetLeft + cards[best]!.offsetWidth / 2 - center)
-            ? i
-            : best,
-        0,
-      );
-      if (nearest !== index) onChange(positions[nearest] ?? null);
-    }, SETTLE_MS);
-  }
-
-  const step = (delta: number) => onChange(positions[(index + delta + positions.length) % positions.length] ?? null);
-
+    if (embla && embla.selectedScrollSnap() !== index) embla.scrollTo(index);
+  }, [embla, index, positions.length]);
   return (
-    <section className={tall ? 'swipe-row tall' : 'swipe-row'} aria-label={label}>
-      <header>
-        <h2>{label}</h2>
+    <Stack component="section" aria-label={label} gap="xs">
+      <Group justify="space-between" align="baseline">
+        <Text fw={600}>{label}</Text>
         {action}
-      </header>
-      <div className="swipe-track">
-        <button className="arrow" aria-label={`Previous ${label}`} onClick={() => step(-1)}>
-          <svg viewBox="0 0 24 24" aria-hidden>
-            <path d="M15 5l-7 7 7 7" />
-          </svg>
-        </button>
-        <div className="swipe-scroller" ref={scroller} onScroll={onScroll}>
-          {positions.map((id, i) => {
-            const item = options.find((option) => option.id === id);
-            return (
-              <div key={id ?? 'none'} className="swipe-card" aria-current={i === index}>
-                {item ? (
-                  <>
-                    <StoredPhoto photoId={item.photoId} size="thumb" alt={item.name} />
-                    <span className="swipe-name">{item.name}</span>
-                    {item.wishlist && <span className="badge">wishlist</span>}
-                  </>
-                ) : (
-                  <span className="muted">None</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <button className="arrow" aria-label={`Next ${label}`} onClick={() => step(1)}>
-          <svg viewBox="0 0 24 24" aria-hidden>
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-    </section>
+      </Group>
+      <Carousel
+        getEmblaApi={setEmbla}
+        initialSlide={index}
+        onSlideChange={(i) => i !== index && onChange(positions[i] ?? null)}
+        emblaOptions={{ align: 'center', containScroll: false }}
+        slideSize={{ base: tall ? '62%' : '48%', md: tall ? '34%' : '26%' }}
+        slideGap="md"
+        controlsOffset="xs"
+        previousControlProps={{ 'aria-label': `Previous ${label}` }}
+        nextControlProps={{ 'aria-label': `Next ${label}` }}
+      >
+        {positions.map((id, i) => {
+          const item = options.find((option) => option.id === id);
+          return (
+            <Carousel.Slide key={id ?? 'none'} aria-current={i === index} style={{ opacity: i === index ? 1 : 0.45 }}>
+              {item ? (
+                <ItemCard item={item} ratio={ratio} showWishlist />
+              ) : (
+                <Stack gap={8}>
+                  <PhotoFrame ratio={ratio}>
+                    <Center h="100%">
+                      <Text c="dimmed">None</Text>
+                    </Center>
+                  </PhotoFrame>
+                  <Text size="sm">&nbsp;</Text>
+                </Stack>
+              )}
+            </Carousel.Slide>
+          );
+        })}
+      </Carousel>
+    </Stack>
   );
 }

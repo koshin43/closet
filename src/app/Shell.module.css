@@ -1,0 +1,39 @@
+.topLink {
+  padding: 22px 0;
+  border-bottom: 2px solid transparent;
+  color: var(--mantine-color-text);
+  font-size: var(--mantine-font-size-sm);
+  text-decoration: none;
+}
+
+.topLink:global(.active) {
+  border-color: var(--mantine-primary-color-filled);
+  font-weight: 600;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  color: var(--mantine-color-dimmed);
+  font-size: var(--mantine-font-size-xs);
+  text-decoration: none;
+}
+
+.tab:global(.active) {
+  color: var(--mantine-primary-color-filled);
+  font-weight: 600;
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

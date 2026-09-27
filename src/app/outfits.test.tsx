@@ -15,18 +15,19 @@ describe('outfit builder', () => {
     await user.click(screen.getByRole('button', { name: 'Next Top' }));
     await user.click(screen.getByRole('button', { name: 'Next Bottom' }));
     await user.click(screen.getByRole('button', { name: 'Next Footwear' }));
-    expect(currentCard('Top')).toBe('white kurta');
-    expect(currentCard('Bottom')).toBe('jeans');
+    expect(currentCard('Top')).toContain('white kurta');
+    expect(currentCard('Bottom')).toContain('jeans');
 
     await user.click(screen.getByRole('button', { name: 'Wear a one-piece instead' }));
     expect(screen.queryByRole('region', { name: 'Top' })).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Next One-piece' }));
-    expect(currentCard('One-piece')).toBe('anarkaliwishlist');
+    expect(currentCard('One-piece')).toContain('anarkali');
+    expect(currentCard('One-piece')).toContain('wishlist');
 
     await user.click(screen.getByRole('button', { name: 'Back to top + bottom' }));
-    expect(currentCard('Top')).toBe('white kurta');
+    expect(currentCard('Top')).toContain('white kurta');
     await user.click(screen.getByRole('button', { name: 'Wear a one-piece instead' }));
-    expect(currentCard('One-piece')).toBe('anarkaliwishlist');
+    expect(currentCard('One-piece')).toContain('anarkali');
 
     await user.click(screen.getByRole('button', { name: 'Save outfit' }));
     expect(screen.getByLabelText('Outfit name')).toHaveProperty('value', 'Outfit 1');
@@ -48,7 +49,7 @@ describe('outfit builder', () => {
     await seedItem({ name: 'cap', slot: 'accessory' });
     const { user } = renderApp('/style');
 
-    await user.click(await screen.findByRole('button', { name: 'Traditional' }));
+    await user.click(await screen.findByRole('radio', { name: 'Traditional' }));
     const topRow = screen.getByRole('region', { name: 'Top' });
     expect(within(topRow).queryByText('graphic tee')).toBeNull();
     expect(within(screen.getByRole('region', { name: 'Bottom' })).queryByText('jeans')).toBeNull();
@@ -61,8 +62,8 @@ describe('outfit builder', () => {
 
     vi.spyOn(Math, 'random').mockReturnValue(0);
     await user.click(screen.getByRole('button', { name: 'Shuffle' }));
-    expect(currentCard('Top')).toBe('white kurta');
-    expect(currentCard('Bottom')).toBe('None');
+    expect(currentCard('Top')).toContain('white kurta');
+    expect(currentCard('Bottom')).toContain('None');
     expect(screen.getByRole('button', { name: 'Remove dupatta' })).toBeTruthy();
 
     await user.click(screen.getByRole('button', { name: 'Save outfit' }));
@@ -81,7 +82,7 @@ describe('outfit builder', () => {
 
     await user.click(await screen.findByRole('link', { name: 'Edit in builder' }));
     expect(await screen.findByText('Editing Diwali look')).toBeTruthy();
-    expect(currentCard('One-piece')).toBe('anarkali');
+    expect(currentCard('One-piece')).toContain('anarkali');
     expect(screen.queryByRole('region', { name: 'Top' })).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Next Footwear' }));
@@ -140,7 +141,7 @@ describe('outfits', () => {
     expect(await db.photos.count()).toBe(1);
 
     await user.click(screen.getByRole('link', { name: /Outfits/ }));
-    const card = (await screen.findByText('Casual')).closest('li')!;
+    const card = (await screen.findByText('Casual')).closest('a')!;
     expect(within(card).getByText('Missing')).toBeTruthy();
   });
 

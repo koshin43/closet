@@ -10,8 +10,8 @@ export function renderApp(path: string) {
   return { router, user: userEvent.setup({ applyAccept: false }) };
 }
 
-export function image(name: string, width = 800, height = 1000): File {
-  return new File([`img:${width}x${height}`], name, { type: 'image/jpeg' });
+export function image(name: string, width = 800, height = 1000, edge = '#ffffff'): File {
+  return new File([`img:${width}x${height}:${edge}`], name, { type: 'image/jpeg' });
 }
 
 export function notAnImage(name: string): File {
@@ -34,7 +34,12 @@ export async function seedItem({ name, slot, style = 'western', wishlist = false
   const id = crypto.randomUUID();
   const photoId = crypto.randomUUID();
   const now = Date.now();
-  await db.photos.add({ id: photoId, full: new Blob(['full'], { type: 'image/webp' }), thumb: new Blob(['thumb'], { type: 'image/webp' }) });
+  await db.photos.add({
+    id: photoId,
+    full: new Blob(['full'], { type: 'image/webp' }),
+    thumb: new Blob(['thumb'], { type: 'image/webp' }),
+    backdrop: '#ffffff',
+  });
   await db.items.add({ id, photoId, name, slot, style, color: null, notes: null, wishlist, createdAt: now, updatedAt: now });
   return id;
 }

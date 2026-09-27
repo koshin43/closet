@@ -1,3 +1,4 @@
+import { Anchor, Badge, Button, Grid, Group, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -14,10 +15,12 @@ export function OutfitDetail({ id }: { id: string }) {
   if (outfit === undefined || !items) return null;
   if (outfit === null) {
     return (
-      <main className="screen narrow">
-        <p>This outfit no longer exists.</p>
-        <Link to="/outfits">Back to my outfits</Link>
-      </main>
+      <Stack align="flex-start">
+        <Text>This outfit no longer exists.</Text>
+        <Anchor component={Link} to="/outfits">
+          Back to my outfits
+        </Anchor>
+      </Stack>
     );
   }
   const itemsById = new Map(items.map((item) => [item.id, item]));
@@ -36,43 +39,50 @@ export function OutfitDetail({ id }: { id: string }) {
   }
 
   return (
-    <main className="screen narrow">
-      <header className="screen-header">
-        <Link to="/outfits" className="text-button">
-          ‹ Back
-        </Link>
-        {includesWishlist(outfit, itemsById) && <span className="badge">includes wishlist</span>}
-      </header>
-      {newName === null ? (
-        <h1>{outfit.name}</h1>
-      ) : (
-        <form className="name-form" onSubmit={rename}>
-          <label className="field">
-            <span>Outfit name</span>
-            <input autoFocus value={newName} onChange={(e) => setNewName(e.target.value)} />
-          </label>
-          <div className="actions">
-            <button type="button" className="button secondary" onClick={() => setNewName(null)}>
-              Cancel
-            </button>
-            <button className="button" disabled={newName.trim() === ''}>
-              Save name
-            </button>
-          </div>
-        </form>
-      )}
-      <OutfitStack picks={outfit} items={itemsById} size="full" />
-      <div className="actions">
-        <Link to={`/style/${outfit.id}`} className="button">
-          Edit in builder
-        </Link>
-        <button className="button secondary" onClick={() => setNewName(outfit.name)}>
-          Rename
-        </button>
-        <button className="button danger" onClick={remove}>
-          Delete
-        </button>
-      </div>
-    </main>
+    <Stack gap="lg">
+      <Anchor component={Link} to="/outfits">
+        Back
+      </Anchor>
+      <Grid gap={{ base: 'lg', md: 48 }}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <OutfitStack picks={outfit} items={itemsById} size="full" />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <Stack gap="lg">
+            {newName === null ? (
+              <Stack gap="xs" align="flex-start">
+                <Title order={1}>{outfit.name}</Title>
+                {includesWishlist(outfit, itemsById) && <Badge variant="light">includes wishlist</Badge>}
+              </Stack>
+            ) : (
+              <form onSubmit={rename}>
+                <Stack gap="sm">
+                  <TextInput label="Outfit name" data-autofocus value={newName} onChange={(e) => setNewName(e.currentTarget.value)} />
+                  <Group grow>
+                    <Button variant="default" onClick={() => setNewName(null)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={newName.trim() === ''}>
+                      Save name
+                    </Button>
+                  </Group>
+                </Stack>
+              </form>
+            )}
+            <Button component={Link} to={`/style/${outfit.id}`} size="md">
+              Edit in builder
+            </Button>
+            <Group grow>
+              <Button variant="default" onClick={() => setNewName(outfit.name)}>
+                Rename
+              </Button>
+              <Button variant="subtle" onClick={remove}>
+                Delete
+              </Button>
+            </Group>
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </Stack>
   );
 }

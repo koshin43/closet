@@ -1,6 +1,7 @@
+import { Alert, Anchor, Button, Center, FileButton, Grid, Group, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { BlobImage, encodePhoto, UnreadablePhotoError, type Photo } from '../photos';
+import { encodePhoto, PhotoFrame, PhotoView, UnreadablePhotoError, type Photo } from '../photos';
 import { ItemForm, draftToFields, type ItemDraft } from './ItemForm';
 import { addItem } from './itemStore';
 import { readLastStyle, rememberLastStyle } from './lastStyle';
@@ -17,7 +18,7 @@ export function AddItem({ wishlist }: { wishlist: boolean }) {
   const fields = draftToFields(draft);
   const back = wishlist ? '/wishlist' : '/closet';
 
-  async function choose(file: File | undefined) {
+  async function choose(file: File | null) {
     if (!file) return;
     try {
       setPhoto(await encodePhoto(file));
@@ -36,23 +37,46 @@ export function AddItem({ wishlist }: { wishlist: boolean }) {
   }
 
   return (
-    <main className="screen narrow">
-      <header className="screen-header">
-        <h1>Add an item</h1>
-        <Link to={back} className="text-button">
+    <Stack gap="lg">
+      <Group justify="space-between" align="baseline">
+        <Title order={1}>Add an item</Title>
+        <Anchor component={Link} to={back}>
           Cancel
-        </Link>
-      </header>
-      <div className="add-photo">{photo && <BlobImage blob={photo.full} alt="Chosen photo" />}</div>
-      <label className="button secondary">
-        {photo ? 'Change photo' : 'Choose photo'}
-        <input type="file" accept="image/*" hidden onChange={(e) => choose(e.target.files?.[0])} />
-      </label>
-      {error && <p role="alert" className="error">{error}</p>}
-      <ItemForm draft={draft} onChange={setDraft} showWishlist />
-      <button className="button" disabled={!fields || !photo} onClick={save}>
-        {draft.wishlist ? 'Add to wishlist' : 'Add to closet'}
-      </button>
-    </main>
+        </Anchor>
+      </Group>
+      <Grid gap={{ base: 'lg', md: 48 }}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <Stack gap="sm">
+            <PhotoFrame>
+              {photo ? (
+                <PhotoView photo={photo} size="full" alt="Chosen photo" />
+              ) : (
+                <Center h="100%">
+                  <Text c="dimmed" size="sm">
+                    No photo yet
+                  </Text>
+                </Center>
+              )}
+            </PhotoFrame>
+            <FileButton onChange={choose} accept="image/*" inputProps={{ 'aria-label': 'Choose photo' }}>
+              {(props) => (
+                <Button {...props} variant="default">
+                  {photo ? 'Change photo' : 'Choose photo'}
+                </Button>
+              )}
+            </FileButton>
+            {error && <Alert>{error}</Alert>}
+          </Stack>
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          <Stack gap="xl">
+            <ItemForm draft={draft} onChange={setDraft} showWishlist />
+            <Button size="md" disabled={!fields || !photo} onClick={save}>
+              {draft.wishlist ? 'Add to wishlist' : 'Add to closet'}
+            </Button>
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </Stack>
   );
 }

@@ -1,3 +1,4 @@
+import { Anchor, Box, Button, Grid, Group, Modal, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -18,10 +19,12 @@ export function OutfitBuilder({ outfitId }: { outfitId: string | undefined }) {
   if (!items || !outfits || outfit === undefined) return null;
   if (outfitId && !outfit) {
     return (
-      <main className="screen">
-        <p>This outfit no longer exists.</p>
-        <Link to="/style">Start a new outfit</Link>
-      </main>
+      <Stack align="flex-start">
+        <Text>This outfit no longer exists.</Text>
+        <Anchor component={Link} to="/style">
+          Start a new outfit
+        </Anchor>
+      </Stack>
     );
   }
   return <Builder key={outfitId ?? 'new'} items={items} outfit={outfit} outfitCount={outfits.length} />;
@@ -59,7 +62,7 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
   };
   const canSave = rowSlots.some((slot) => shown(slot) !== null) || accessories.length > 0;
 
-  const pick = (slot: RowSlot) => (id: string | null) => setPicks({ ...picks, [slot]: id });
+  const pick = (slot: RowSlot) => (id: string | null) => setPicks((current) => ({ ...current, [slot]: id }));
 
   function shuffle() {
     const next = { ...picks };
@@ -83,90 +86,97 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
   const itemsById = new Map(items.map((item) => [item.id, item]));
 
   return (
-    <main className="screen builder">
-      <header className="screen-header">
+    <Stack gap="lg">
+      <Group justify="space-between" align="flex-start">
         <div>
-          <h1>Let’s get dressed</h1>
-          {outfit && <p className="muted">Editing {outfit.name}</p>}
+          <Title order={1}>Let’s get dressed</Title>
+          {outfit && <Text c="dimmed">Editing {outfit.name}</Text>}
         </div>
-        <button className="button secondary" onClick={shuffle}>
+        <Button variant="default" onClick={shuffle}>
           Shuffle
-        </button>
-      </header>
+        </Button>
+      </Group>
       <StyleFilter value={filter} onChange={setFilter} />
-      <div className="builder-layout">
-        <div className="builder-rows">
-          {onePiece ? (
-            <SwipeRow
-              label="One-piece"
-              tall
-              options={candidates('onepiece')}
-              value={shown('onepiece')}
-              onChange={pick('onepiece')}
-              action={
-                <button className="text-button" onClick={() => setOnePiece(false)}>
-                  Back to top + bottom
-                </button>
-              }
-            />
-          ) : (
-            <>
+      <Grid gap={{ base: 'lg', md: 48 }}>
+        <Grid.Col span={{ base: 12, md: 8 }}>
+          <Stack gap="xl">
+            {onePiece ? (
               <SwipeRow
-                label="Top"
-                options={candidates('top')}
-                value={shown('top')}
-                onChange={pick('top')}
+                label="One-piece"
+                tall
+                options={candidates('onepiece')}
+                value={shown('onepiece')}
+                onChange={pick('onepiece')}
                 action={
-                  <button className="text-button" onClick={() => setOnePiece(true)}>
-                    Wear a one-piece instead
-                  </button>
+                  <Anchor component="button" size="sm" onClick={() => setOnePiece(false)}>
+                    Back to top + bottom
+                  </Anchor>
                 }
               />
-              <SwipeRow label="Bottom" options={candidates('bottom')} value={shown('bottom')} onChange={pick('bottom')} />
-            </>
-          )}
-          <SwipeRow label="Footwear" options={candidates('footwear')} value={shown('footwear')} onChange={pick('footwear')} />
-          <AccessoriesRow options={candidates('accessory')} chosen={accessories} onChange={setAccessoryIds} />
-        </div>
-        <aside className="builder-preview" aria-hidden>
-          {canSave ? (
-            <OutfitStack picks={result} items={itemsById} size="thumb" />
-          ) : (
-            <p className="muted">Your outfit shows up here.</p>
-          )}
-        </aside>
-      </div>
-      {naming ? (
-        <form className="name-form" onSubmit={save}>
-          <label className="field">
-            <span>Outfit name</span>
-            <input autoFocus value={naming.name} onChange={(e) => setNaming({ ...naming, name: e.target.value })} />
-          </label>
-          <div className="actions">
-            <button type="button" className="button secondary" onClick={() => setNaming(null)}>
-              Cancel
-            </button>
-            <button className="button" disabled={naming.name.trim() === ''}>
-              Save
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="actions">
-          {outfit && (
-            <button className="button secondary" disabled={!canSave} onClick={() => setNaming({ asNew: true, name: suggestion })}>
-              Save as new
-            </button>
-          )}
-          <button
-            className="button"
-            disabled={!canSave}
-            onClick={() => setNaming({ asNew: false, name: outfit?.name ?? suggestion })}
-          >
-            Save outfit
-          </button>
-        </div>
-      )}
-    </main>
+            ) : (
+              <>
+                <SwipeRow
+                  label="Top"
+                  options={candidates('top')}
+                  value={shown('top')}
+                  onChange={pick('top')}
+                  action={
+                    <Anchor component="button" size="sm" onClick={() => setOnePiece(true)}>
+                      Wear a one-piece instead
+                    </Anchor>
+                  }
+                />
+                <SwipeRow label="Bottom" options={candidates('bottom')} value={shown('bottom')} onChange={pick('bottom')} />
+              </>
+            )}
+            <SwipeRow label="Footwear" options={candidates('footwear')} value={shown('footwear')} onChange={pick('footwear')} />
+            <AccessoriesRow options={candidates('accessory')} chosen={accessories} onChange={setAccessoryIds} />
+          </Stack>
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Stack gap="md" pos="sticky" top={92}>
+            <Box visibleFrom="md" aria-hidden>
+              {canSave ? (
+                <OutfitStack picks={result} items={itemsById} size="thumb" />
+              ) : (
+                <Text c="dimmed" size="sm">
+                  Your outfit shows up here.
+                </Text>
+              )}
+            </Box>
+            <Button size="md" disabled={!canSave} onClick={() => setNaming({ asNew: false, name: outfit?.name ?? suggestion })}>
+              Save outfit
+            </Button>
+            {outfit && (
+              <Button variant="default" size="md" disabled={!canSave} onClick={() => setNaming({ asNew: true, name: suggestion })}>
+                Save as new
+              </Button>
+            )}
+          </Stack>
+        </Grid.Col>
+      </Grid>
+      <Modal opened={naming !== null} onClose={() => setNaming(null)} title="Name this outfit" centered>
+        {naming && (
+          <form onSubmit={save}>
+            <Stack>
+              <TextInput
+                label="Outfit name"
+                data-autofocus
+                value={naming.name}
+                onChange={(e) => setNaming({ ...naming, name: e.currentTarget.value })}
+              />
+              <Group grow>
+                <Button variant="default" onClick={() => setNaming(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={naming.name.trim() === ''}>
+                  Save
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        )}
+      </Modal>
+    </Stack>
   );
 }

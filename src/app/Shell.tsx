@@ -1,5 +1,6 @@
+import { AppShell, Container, Group, Text, useMatches } from '@mantine/core';
 import { NavLink, Outlet } from 'react-router';
-import './theme.css';
+import classes from './Shell.module.css';
 
 const SECTIONS = [
   { to: '/closet', label: 'Closet', icon: 'M12 5a2 2 0 1 1 2 2c-1 0-2 .6-2 1.6V9l8 4.6c1.2.7.7 2.4-.7 2.4H4.7c-1.4 0-1.9-1.7-.7-2.4L12 9' },
@@ -9,20 +10,45 @@ const SECTIONS = [
 ];
 
 export function Shell() {
+  const laptop = useMatches({ base: false, md: true });
   return (
-    <div className="shell">
-      <nav className="sections" aria-label="Sections">
-        <span className="brand">Closet</span>
-        {SECTIONS.map((section) => (
-          <NavLink key={section.to} to={section.to}>
-            <svg className="section-icon" viewBox="0 0 24 24" aria-hidden>
-              <path d={section.icon} />
-            </svg>
-            {section.label}
-          </NavLink>
-        ))}
-      </nav>
-      <Outlet />
-    </div>
+    <AppShell header={{ height: 68, collapsed: !laptop }} footer={{ height: 64, collapsed: laptop }} padding="md">
+      {laptop ? (
+        <AppShell.Header withBorder>
+          <Container size="xl" h="100%">
+            <Group h="100%" justify="space-between">
+              <Text fz={22} fw={700}>
+                Closet
+              </Text>
+              <Group component="nav" aria-label="Sections" gap="xl">
+                {SECTIONS.map((section) => (
+                  <NavLink key={section.to} to={section.to} className={classes.topLink}>
+                    {section.label}
+                  </NavLink>
+                ))}
+              </Group>
+            </Group>
+          </Container>
+        </AppShell.Header>
+      ) : (
+        <AppShell.Footer withBorder>
+          <Group component="nav" aria-label="Sections" h="100%" grow gap={0}>
+            {SECTIONS.map((section) => (
+              <NavLink key={section.to} to={section.to} className={classes.tab}>
+                <svg viewBox="0 0 24 24" aria-hidden className={classes.icon}>
+                  <path d={section.icon} />
+                </svg>
+                {section.label}
+              </NavLink>
+            ))}
+          </Group>
+        </AppShell.Footer>
+      )}
+      <AppShell.Main>
+        <Container size="xl" px={0} pb={96}>
+          <Outlet />
+        </Container>
+      </AppShell.Main>
+    </AppShell>
   );
 }

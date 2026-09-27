@@ -3,48 +3,49 @@ import { describe, expect, test, vi } from 'vitest';
 import { db } from '../db';
 import { image, notAnImage, renderApp } from './testApp';
 
-async function storedPhotoSizes() {
-  const photos = (await db.photos.toArray()) as { full: Blob; thumb: Blob }[];
-  return Promise.all(photos.map(async (photo) => [await photo.full.text(), await photo.thumb.text()]));
+async function storedPhotos() {
+  const photos = (await db.photos.toArray()) as { full: Blob; thumb: Blob; backdrop: string | null }[];
+  return Promise.all(photos.map(async (photo) => [await photo.full.text(), await photo.thumb.text(), photo.backdrop]));
 }
 
 describe('closet', () => {
-  test('adding an item stores resized photos and shows it under the right filters', async () => {
+  test('adding an item stores resized photos with their edge color and shows it under the right filters', async () => {
     const { user } = renderApp('/closet');
     await user.click(await screen.findByRole('link', { name: 'Add your first item' }));
 
-    await user.upload(screen.getByLabelText('Choose photo'), image('kurta.jpg', 3000, 2000));
+    await user.upload(screen.getByLabelText('Choose photo'), image('kurta.jpg', 3000, 2000, '#f4efe9'));
     await user.type(screen.getByLabelText('Name'), 'red silk kurta');
     await user.click(screen.getByRole('radio', { name: 'Top' }));
     await user.click(screen.getByRole('radio', { name: 'Traditional' }));
     await user.selectOptions(screen.getByLabelText('Color'), 'maroon');
     await user.click(screen.getByRole('button', { name: 'Add to closet' }));
 
-    const tile = (await screen.findByText('red silk kurta')).closest('li')!;
-    expect(within(tile).getByText('Trad')).toBeTruthy();
+    const tile = await screen.findByRole('link', { name: 'red silk kurta' });
+    expect(within(tile).getByText('Traditional')).toBeTruthy();
+    expect(within(tile).getByText('maroon')).toBeTruthy();
     expect(screen.getByText('1 item')).toBeTruthy();
-    expect(await storedPhotoSizes()).toEqual([['1200x800', '400x267']]);
+    expect(await storedPhotos()).toEqual([['1200x800', '400x267', '#f4efe9']]);
     expect(await db.items.toArray()).toMatchObject([{ name: 'red silk kurta', color: 'maroon', notes: null, wishlist: false }]);
 
-    await user.click(screen.getByRole('button', { name: 'Bottoms' }));
+    await user.click(screen.getByRole('radio', { name: 'Bottoms' }));
     expect(screen.queryByText('red silk kurta')).toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Tops' }));
+    await user.click(screen.getByRole('radio', { name: 'Tops' }));
     expect(screen.getByText('red silk kurta')).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'Western' }));
+    await user.click(screen.getByRole('radio', { name: 'Western' }));
     expect(screen.queryByText('red silk kurta')).toBeNull();
 
     await user.click(screen.getByRole('link', { name: /Wishlist/ }));
     expect(await screen.findByText('Nothing on your wishlist yet.')).toBeTruthy();
   });
 
-  test('small photos are stored at their own size, never upscaled', async () => {
+  test('small photos are stored at their own size, and transparent edges get no backdrop', async () => {
     const { user } = renderApp('/closet/add');
-    await user.upload(await screen.findByLabelText('Choose photo'), image('ring.jpg', 300, 200));
+    await user.upload(await screen.findByLabelText('Choose photo'), image('ring.png', 300, 200, 'transparent'));
     await user.type(screen.getByLabelText('Name'), 'ring');
     await user.click(screen.getByRole('radio', { name: 'Accessory' }));
     await user.click(screen.getByRole('button', { name: 'Add to closet' }));
     await screen.findByText('ring');
-    expect(await storedPhotoSizes()).toEqual([['300x200', '300x200']]);
+    expect(await storedPhotos()).toEqual([['300x200', '300x200', null]]);
   });
 
   test('a file that is not an image is rejected and nothing is stored', async () => {
@@ -73,9 +74,9 @@ describe('closet', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(async () => expect(await db.items.toArray()).toMatchObject([{ style: 'western' }]));
 
-    await user.click(screen.getByRole('link', { name: '‹ Back' }));
+    await user.click(screen.getByRole('link', { name: 'Back' }));
     await user.click(await screen.findByRole('button', { name: 'Add' }));
-    await user.click(screen.getByRole('menuitem', { name: 'One photo' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'One photo' }));
     expect(await screen.findByRole('radio', { name: 'Traditional' })).toHaveProperty('checked', true);
   });
 });
@@ -84,7 +85,7 @@ describe('wishlist', () => {
   test('items added from the wishlist default to wishlist, and "I bought it" moves them to the closet', async () => {
     const { user } = renderApp('/wishlist');
     await user.click(await screen.findByRole('link', { name: 'Add your first item' }));
-    expect(screen.getByRole('checkbox', { name: 'Wishlist' })).toHaveProperty('checked', true);
+    expect(screen.getByRole('switch', { name: 'Wishlist' })).toHaveProperty('checked', true);
 
     await user.upload(screen.getByLabelText('Choose photo'), image('lehenga.jpg'));
     await user.type(screen.getByLabelText('Name'), 'green lehenga');
@@ -117,14 +118,14 @@ describe('bulk add', () => {
     await user.type(screen.getByLabelText('Name'), 'blue jeans');
     await user.click(screen.getByRole('radio', { name: 'Bottom' }));
     await user.click(screen.getByRole('radio', { name: 'Traditional' }));
-    await user.click(screen.getByRole('checkbox', { name: 'Wishlist' }));
+    await user.click(screen.getByRole('switch', { name: 'Wishlist' }));
     await user.click(screen.getByRole('button', { name: 'Save and next' }));
 
     expect(await screen.findByRole('heading', { name: '2 of 3' })).toBeTruthy();
     expect(screen.getByLabelText('Name')).toHaveProperty('value', '');
     expect(screen.getByRole('radio', { name: 'Bottom' })).toHaveProperty('checked', true);
     expect(screen.getByRole('radio', { name: 'Traditional' })).toHaveProperty('checked', true);
-    expect(screen.getByRole('checkbox', { name: 'Wishlist' })).toHaveProperty('checked', true);
+    expect(screen.getByRole('switch', { name: 'Wishlist' })).toHaveProperty('checked', true);
 
     await user.click(screen.getByRole('button', { name: 'Skip' }));
     expect(await screen.findByRole('heading', { name: '3 of 3' })).toBeTruthy();
@@ -172,11 +173,11 @@ describe('item detail', () => {
 
     await user.type(screen.getByLabelText('Notes'), 'runs small');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
-    await user.click(screen.getByRole('link', { name: '‹ Back' }));
+    await user.click(screen.getByRole('link', { name: 'Back' }));
     expect(confirm).toHaveBeenCalledWith('Discard changes?');
     expect(router.state.location.pathname).toMatch(/^\/items\//);
 
-    await user.click(screen.getByRole('link', { name: '‹ Back' }));
+    await user.click(screen.getByRole('link', { name: 'Back' }));
     await screen.findByRole('heading', { name: 'My closet' });
     expect(await db.items.toArray()).toMatchObject([{ notes: null }]);
   });

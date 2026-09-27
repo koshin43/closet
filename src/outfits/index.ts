@@ -1,4 +1,4 @@
-import './outfits.css';
+import '@mantine/carousel/styles.css';
 export { deleteItem, outfitUsage } from './outfitStore';
 export { OutfitBuilder } from './OutfitBuilder';
 export { OutfitsScreen } from './OutfitsScreen';

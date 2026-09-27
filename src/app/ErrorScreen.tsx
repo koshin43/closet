@@ -1,14 +1,15 @@
+import { Button, Container, Stack, Text, Title } from '@mantine/core';
 import { useRouteError } from 'react-router';
 
 export function ErrorScreen() {
   const error = useRouteError();
   return (
-    <main className="screen narrow" role="alert">
-      <h1>Something went wrong</h1>
-      <p>{error instanceof Error ? error.message : 'An unexpected error happened.'}</p>
-      <button className="button" onClick={() => window.location.reload()}>
-        Reload
-      </button>
-    </main>
+    <Container size="xs" py="xl">
+      <Stack role="alert" align="flex-start">
+        <Title order={1}>Something went wrong</Title>
+        <Text>{error instanceof Error ? error.message : 'An unexpected error happened.'}</Text>
+        <Button onClick={() => window.location.reload()}>Reload</Button>
+      </Stack>
+    </Container>
   );
 }

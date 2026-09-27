@@ -1,6 +1,7 @@
+import { Alert, Anchor, Button, FileButton, Grid, Group, Progress, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { BlobImage, encodePhoto, UnreadablePhotoError, type Photo } from '../photos';
+import { encodePhoto, PhotoFrame, PhotoView, UnreadablePhotoError, type Photo } from '../photos';
 import { newDraft } from './AddItem';
 import { ItemForm, draftToFields } from './ItemForm';
 import { addItem } from './itemStore';
@@ -55,41 +56,53 @@ export function BulkAdd({ wishlist }: { wishlist: boolean }) {
   }
 
   return (
-    <main className="screen narrow">
-      <header className="screen-header">
-        <h1>{phase.name === 'walk' ? `${phase.index + 1} of ${phase.photos.length}` : 'Add several items'}</h1>
-        <Link to={back} className="text-button">
+    <Stack gap="lg">
+      <Group justify="space-between" align="baseline">
+        <Title order={1}>{phase.name === 'walk' ? `${phase.index + 1} of ${phase.photos.length}` : 'Add several items'}</Title>
+        <Anchor component={Link} to={back}>
           {phase.name === 'walk' ? 'Done' : 'Cancel'}
-        </Link>
-      </header>
-      {notice && <p role="alert" className="error">{notice}</p>}
+        </Anchor>
+      </Group>
+      {notice && <Alert>{notice}</Alert>}
       {phase.name === 'pick' && (
-        <label className="button">
-          Choose photos
-          <input type="file" accept="image/*" multiple hidden onChange={(e) => prepare([...(e.target.files ?? [])])} />
-        </label>
+        <FileButton onChange={prepare} accept="image/*" multiple inputProps={{ 'aria-label': 'Choose photos' }}>
+          {(props) => (
+            <Button {...props} size="md" maw={320}>
+              Choose photos
+            </Button>
+          )}
+        </FileButton>
       )}
       {phase.name === 'preparing' && (
-        <p className="muted" role="status">
-          Getting photos ready… {phase.done} of {phase.total}
-        </p>
+        <Stack gap="xs" maw={420} role="status">
+          <Text c="dimmed" size="sm">
+            Getting photos ready… {phase.done} of {phase.total}
+          </Text>
+          <Progress value={(phase.done / phase.total) * 100} />
+        </Stack>
       )}
       {phase.name === 'walk' && current && (
-        <>
-          <div className="add-photo">
-            <BlobImage key={current.id} blob={current.full} alt={`Photo ${phase.index + 1}`} />
-          </div>
-          <ItemForm draft={draft} onChange={setDraft} showWishlist />
-          <div className="actions">
-            <button className="button secondary" onClick={() => next(phase.photos, phase.index)}>
-              Skip
-            </button>
-            <button className="button" disabled={!fields} onClick={() => saveAndNext(phase.photos, phase.index, current)}>
-              Save and next
-            </button>
-          </div>
-        </>
+        <Grid gap={{ base: 'lg', md: 48 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <PhotoFrame>
+              <PhotoView key={current.id} photo={current} size="full" alt={`Photo ${phase.index + 1}`} />
+            </PhotoFrame>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <Stack gap="xl">
+              <ItemForm draft={draft} onChange={setDraft} showWishlist />
+              <Group grow>
+                <Button variant="default" size="md" onClick={() => next(phase.photos, phase.index)}>
+                  Skip
+                </Button>
+                <Button size="md" disabled={!fields} onClick={() => saveAndNext(phase.photos, phase.index, current)}>
+                  Save and next
+                </Button>
+              </Group>
+            </Stack>
+          </Grid.Col>
+        </Grid>
       )}
-    </main>
+    </Stack>
   );
 }

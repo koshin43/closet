@@ -1,5 +1,5 @@
+import { Image } from '@mantine/core';
 import { useCallback } from 'react';
-import './photos.css';
 
 export function BlobImage({ blob, alt }: { blob: Blob; alt: string }) {
   const attach = useCallback(
@@ -10,5 +10,5 @@ export function BlobImage({ blob, alt }: { blob: Blob; alt: string }) {
     },
     [blob],
   );
-  return <img ref={attach} alt={alt} className="photo" />;
+  return <Image ref={attach} alt={alt} fit="contain" w="100%" h="100%" />;
 }

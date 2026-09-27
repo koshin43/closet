@@ -1,3 +1,4 @@
+import { Anchor, Badge, Box, Button, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Link } from 'react-router';
 import { listItems } from '../items';
@@ -12,33 +13,39 @@ export function OutfitsScreen() {
   const itemsById = new Map(items.map((item) => [item.id, item]));
 
   return (
-    <main className="screen">
-      <header className="screen-header">
-        <h1>My outfits</h1>
-        <span className="muted">
+    <Stack gap="lg">
+      <Group justify="space-between" align="baseline">
+        <Title order={1}>My outfits</Title>
+        <Text c="dimmed" size="sm">
           {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'}
-        </span>
-      </header>
+        </Text>
+      </Group>
       {outfits.length === 0 ? (
-        <div className="empty">
-          <p>No outfits yet.</p>
-          <Link to="/style" className="button big">
+        <Stack align="center" py={64} gap="md">
+          <Text c="dimmed">No outfits yet.</Text>
+          <Button component={Link} to="/style" size="lg">
             Let’s get dressed
-          </Link>
-        </div>
+          </Button>
+        </Stack>
       ) : (
-        <ul className="grid outfits">
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 5 }} spacing="md" verticalSpacing="xl">
           {outfits.map((outfit) => (
-            <li key={outfit.id} className="tile">
-              <Link to={`/outfits/${outfit.id}`}>
-                <OutfitStack picks={outfit} items={itemsById} size="thumb" />
-                <span className="tile-name">{outfit.name}</span>
-                {includesWishlist(outfit, itemsById) && <span className="badge">includes wishlist</span>}
-              </Link>
-            </li>
+            <Anchor key={outfit.id} component={Link} to={`/outfits/${outfit.id}`} underline="never" c="inherit">
+              <Stack gap={8}>
+                <Box pos="relative">
+                  <OutfitStack picks={outfit} items={itemsById} size="thumb" />
+                  {includesWishlist(outfit, itemsById) && (
+                    <Badge variant="light" size="sm" radius="sm" pos="absolute" top={8} left={8}>
+                      includes wishlist
+                    </Badge>
+                  )}
+                </Box>
+                <Text size="sm">{outfit.name}</Text>
+              </Stack>
+            </Anchor>
           ))}
-        </ul>
+        </SimpleGrid>
       )}
-    </main>
+    </Stack>
   );
 }
