@@ -11,7 +11,7 @@ Success looks like:
 
 - Adding a new item takes under 30 seconds; adding a first batch of dozens of photos is comfortable in one sitting.
 - Building an outfit on the phone while getting dressed is quick and pleasant.
-- The app looks like a boutique catalog, not a spreadsheet.
+- The app looks like an online clothing storefront, not a spreadsheet.
 
 ## 2. Decisions already made
 
@@ -20,7 +20,7 @@ Success looks like:
 | App type | Installable web app (PWA). Primary device: phone. Also usable in a laptop browser with a wider layout. |
 | Data location | On the device only. No accounts, no server, no sync, no backup in v1. |
 | Photo editing | Done **outside** the app (the owner uses AI tools to produce catalog-style images). The app only stores and displays photos. No AI, no background removal, no API keys in the app. |
-| Visual style | Mix of "Clean boutique" and "Warm and playful": warm off-white background, rounded tiles and buttons, one terracotta accent, friendly wording. |
+| Visual style | Storefront, in the manner of a Shopify shop: white page, uniform product-photo cards, names under photos, one terracotta accent, friendly wording. |
 | Slots | Top, Bottom, One-piece, Footwear, Accessories. |
 | Style tag | Every item is Western or Traditional. Traditional wear fits the same slots (blouse = Top, saree/lehenga skirt/salwar = Bottom, kurta = Top, anarkali = One-piece, dupatta = Accessory). |
 | One-pieces | Separate category; when chosen in the outfit builder it replaces both Top and Bottom. |
@@ -30,25 +30,28 @@ Success looks like:
 
 ## 3. Visual language
 
-- Background `#faf8f5`, text `#2b2522`, muted text `#9a8f88`, tile `#f0ebe5`, accent `#e07a5f`, soft accent `#fbe3d8`, hairlines `#eee7e0`.
-- Sans-serif system font stack. Titles in sentence case and friendly ("Let's get dressed", "My closet").
-- Rounded corners: tiles 14–16px, pills and buttons fully rounded.
-- Photos are always shown whole (`object-fit: contain`) centered on the tile color, so differences between AI-generated backgrounds are softened and nothing is cropped.
-- One accent color only, used for primary buttons, the active tab, and the add button.
+The app reads like a clothing storefront: the photos are the product, and everything around them stays quiet.
+
+- Palette: page `#ffffff`, text `#1f1b18`, muted text `#756c66`, photo backdrop `#f5f2ee`, hairlines `#ebe6e1`, accent terracotta `#e07a5f`. Filled buttons use a deeper terracotta `#c9644a` so white text on them stays readable; the soft tint `#fbe3d8` marks wishlist badges.
+- Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Sentence case everywhere; no all-caps labels.
+- Product cards: every item photo sits in the same 3:4 portrait frame on the photo backdrop, shown whole (`object-fit: contain`) so nothing is cropped and differing AI-generated backgrounds are softened. Cards have no border or shadow; the frame has 8px corners. Badges ("Traditional", "wishlist") sit in the photo's top-left corner.
+- Controls: buttons and filter chips are fully rounded; inputs and photos use 8px corners.
+- One accent only, used for primary buttons, the selected chip and tab, and the add button.
+- UI components come from Mantine, themed once with these values.
 
 ## 4. Navigation
 
 - **Phone:** bottom bar with four tabs: Closet, Wishlist, Style, Outfits.
-- **Laptop (≥ 900px wide):** the same four entries in a left side menu; content area uses wider grids.
+- **Laptop (≥ 900px wide):** a storefront top bar with "Closet" on the left and the four entries on the right; the current entry is underlined in terracotta. Content uses wider grids.
 
 ## 5. Screens
 
 ### 5.1 Closet
 
 - Title "My closet" with an item count.
-- Slot tabs: All, Tops, Bottoms, One-piece, Footwear, Accessories.
-- Style filter under the tabs: All / Western / Traditional.
-- Grid of owned items (2 columns on phone, 5+ on laptop). Tile = photo + name. A small "Trad" tag on traditional items.
+- Slot chips: All, Tops, Bottoms, One-piece, Footwear, Accessories.
+- Style filter beside or under the chips: All / Western / Traditional.
+- Grid of owned items as product cards (2 columns on phone, up to 5 on laptop). A "Traditional" badge on traditional items.
 - Floating "+" button opens Add (with a choice: one photo, or several photos).
 - Tapping a tile opens Item detail.
 - Empty state: friendly message and a big "Add your first item" button.
@@ -82,7 +85,7 @@ Success looks like:
 
 ### 5.5 Item detail / edit
 
-- Large photo, all fields editable, "Replace photo".
+- Laid out like a product page: large photo (left on laptop, top on phone) with the fields and actions beside or below it. All fields editable, "Replace photo".
 - Field edits (name, slot, style, color, notes) are kept only when the user taps "Save". Save is disabled while the name is blank. Leaving with unsaved edits asks "Discard changes?".
 - "Move to closet" / "Move to wishlist", "Replace photo" and Delete act immediately and do not need Save.
 - "Replace photo" takes effect as soon as a new photo is picked: the new photo is stored and the old one deleted in the same transaction. If the picked file cannot be decoded as an image, a clear message is shown and the old photo is kept.
@@ -99,18 +102,18 @@ Success looks like:
   - Toggling between the two keeps the picks in the hidden rows for the rest of the session, so switching back restores them. Only the rows on screen are saved.
   - Opening a saved outfit that has a one-piece starts in one-piece mode; otherwise it starts with Top and Bottom.
   - **Footwear**
-  - **Accessories** — a strip of chosen accessories plus a "+" that opens a multi-select picker. Any number, including none.
+  - **Accessories** — a strip of chosen accessories plus a "+" that opens a multi-select picker as a sheet sliding up from the bottom. Any number, including none.
 - Each swipe row also has a "none" position, so any slot can be left empty.
 - Rows contain owned items plus wishlist items; wishlist items carry a "wishlist" badge.
 - Filter narrows every row (e.g. Traditional shows only traditional items). "All" allows mixing (kurta with jeans).
 - Shuffle picks a random item for each non-accessory row within the current filter; accessories are left as they are.
 - Laptop: each row also shows the neighbouring items, and a preview column on the right stacks the current outfit.
 - "Save outfit" (and "Save as new") is disabled until at least one piece is picked; an accessory alone counts.
-- "Save outfit" asks for a name (prefilled suggestion such as "Outfit 7"). Opening a saved outfit in the builder and saving again updates it; "Save as new" is also available.
+- "Save outfit" asks for a name in a dialog (prefilled suggestion such as "Outfit 7"). Opening a saved outfit in the builder and saving again updates it; "Save as new" is also available.
 
 ### 5.7 Outfits
 
-- Grid of saved outfits. Each card stacks its item photos vertically (top, bottom or one-piece, footwear) with accessories as small thumbnails, plus the outfit name.
+- Grid of saved outfits. Every card has the same 3:4 frame; inside it the item photos stack vertically (top, bottom or one-piece, footwear) sharing the height equally, with accessories as a row of small thumbnails at the bottom. The outfit name sits under the frame.
 - Outfits that include wishlist items show a small "includes wishlist" badge.
 - Tapping a card opens the outfit: full view, "Edit in builder", rename, delete.
 
@@ -183,7 +186,7 @@ Rules:
 - `vite-plugin-pwa` for the manifest, icons and service worker.
 - Dexie for IndexedDB.
 - React Router for the four sections and detail screens, using hash URLs so any static host serves every screen without rewrite rules.
-- Plain CSS (CSS variables for the palette), no UI framework.
+- Mantine (`@mantine/core`, `@mantine/hooks`) for UI components, themed once with the palette above; `@mantine/carousel` (Embla) for the builder's swipe rows. Custom CSS only where Mantine cannot express the layout.
 - Hosting: any free static host (GitHub Pages or Cloudflare Pages). Hosting serves the app only; no user data leaves the device.
 
 ## 10. Testing
