@@ -55,7 +55,7 @@ describe('outfit builder', () => {
     expect(within(screen.getByRole('region', { name: 'Bottom' })).queryByText('jeans')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Choose accessories' }));
-    const picker = screen.getByRole('dialog', { name: 'Choose accessories' });
+    const picker = screen.getByRole('dialog', { name: 'Choose Accessories' });
     expect(within(picker).queryByText('cap')).toBeNull();
     await user.click(within(picker).getByRole('checkbox', { name: /dupatta/ }));
     await user.click(within(picker).getByRole('button', { name: 'Done' }));
@@ -135,7 +135,7 @@ describe('outfits', () => {
       "Delete this item? It's used in 2 outfits. 1 outfit will also be deleted because nothing else is left in it.",
     );
 
-    await screen.findByRole('heading', { name: 'My closet' });
+    await screen.findByRole('heading', { name: 'My Closet' });
     expect(await db.outfits.toCollection().primaryKeys()).toEqual([kept]);
     expect(await db.items.toCollection().primaryKeys()).toEqual([jeans]);
     expect(await db.photos.count()).toBe(1);
@@ -166,7 +166,7 @@ describe('stored data', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     await db.table(table).add(record);
     renderApp(path);
-    expect(await screen.findByRole('heading', { name: 'Something went wrong' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Something Went Wrong' })).toBeTruthy();
     expect(screen.getByText(message)).toBeTruthy();
   });
 });

@@ -6,7 +6,7 @@ export function ErrorScreen() {
   return (
     <Container size="xs" py="xl">
       <Stack role="alert" align="flex-start">
-        <Title order={1}>Something went wrong</Title>
+        <Title order={1}>Something Went Wrong</Title>
         <Text>{error instanceof Error ? error.message : 'An unexpected error happened.'}</Text>
         <Button onClick={() => window.location.reload()}>Reload</Button>
       </Stack>

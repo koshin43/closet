@@ -21,7 +21,7 @@ export function ItemsScreen({ wishlist }: { wishlist: boolean }) {
   return (
     <Stack gap="lg">
       <Group justify="space-between" align="baseline">
-        <Title order={1}>{wishlist ? 'My wishlist' : 'My closet'}</Title>
+        <Title order={1}>{wishlist ? 'My Wishlist' : 'My Closet'}</Title>
         <Text c="dimmed" size="sm">
           {mine.length} {mine.length === 1 ? 'item' : 'items'}
         </Text>

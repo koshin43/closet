@@ -39,7 +39,7 @@ export function AddItem({ wishlist }: { wishlist: boolean }) {
   return (
     <Stack gap="lg">
       <Group justify="space-between" align="baseline">
-        <Title order={1}>Add an item</Title>
+        <Title order={1}>Add an Item</Title>
         <Anchor component={Link} to={back}>
           Cancel
         </Anchor>

@@ -33,7 +33,7 @@ Success looks like:
 The app reads like a clothing storefront: the photos are the product, and everything around them stays quiet.
 
 - Palette: page `#ffffff`, text `#1f1b18`, muted text `#756c66`, photo backdrop `#f5f2ee`, hairlines `#ebe6e1`, accent terracotta `#e07a5f`. Filled buttons use a deeper terracotta `#c9644a` so white text on them stays readable; the soft tint `#fbe3d8` marks wishlist badges.
-- Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Sentence case everywhere; no all-caps labels.
+- Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Page titles and dialog titles in Title Case ("My Closet", "Add an Item"); everything else, including buttons, labels and messages, in sentence case; no all-caps labels.
 - Product cards: every item photo sits in the same 3:4 portrait frame, shown whole (`object-fit: contain`) so nothing is cropped or stretched. The frame is filled with the photo's own background color (see Photos), so every card reads as one uniform photo whatever the original's shape; photos with transparent edges sit on the photo backdrop instead. Every other place a photo appears (builder rows, accessory thumbnails, outfit cards) fills its frame the same way. Cards have no border or shadow; the frame has 8px corners. Badges ("Traditional", "wishlist") sit in the photo's top-left corner.
 - Controls: buttons and filter chips are fully rounded; inputs and photos use 8px corners.
 - One accent only, used for primary buttons, the selected chip and tab, and the add button.
@@ -48,7 +48,7 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 
 ### 5.1 Closet
 
-- Title "My closet" with an item count.
+- Title "My Closet" with an item count.
 - Slot chips: All, Tops, Bottoms, One-piece, Footwear, Accessories.
 - Style filter beside or under the chips: All / Western / Traditional.
 - Grid of owned items as product cards (2 columns on phone, up to 5 on laptop). A "Traditional" badge on traditional items.
@@ -94,7 +94,7 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 
 ### 5.6 Style an outfit (outfit builder)
 
-- Title "Let's get dressed", a Shuffle button, and the All / Western / Traditional filter.
+- Title "Let's Get Dressed", a Shuffle button, and the All / Western / Traditional filter.
 - Rows, each swipeable left/right (arrows as well, for laptop):
   - **Top** — with a "Wear a one-piece instead" link.
   - **Bottom**

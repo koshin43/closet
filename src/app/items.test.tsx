@@ -93,7 +93,7 @@ describe('wishlist', () => {
     await user.click(screen.getByRole('button', { name: 'Add to wishlist' }));
 
     expect(await screen.findByText('green lehenga')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'My wishlist' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'My Wishlist' })).toBeTruthy();
 
     await user.click(screen.getByRole('button', { name: 'I bought it' }));
     expect(await screen.findByText('Nothing on your wishlist yet.')).toBeTruthy();
@@ -132,7 +132,7 @@ describe('bulk add', () => {
     await user.type(screen.getByLabelText('Name'), 'salwar');
     await user.click(screen.getByRole('button', { name: 'Save and next' }));
 
-    await screen.findByRole('heading', { name: 'My closet' });
+    await screen.findByRole('heading', { name: 'My Closet' });
     const items = (await db.items.toArray()) as { name: string; slot: string; style: string; wishlist: boolean }[];
     expect(items.map(({ name, slot, style, wishlist }) => ({ name, slot, style, wishlist })).sort((a, b) => a.name.localeCompare(b.name))).toEqual([
       { name: 'blue jeans', slot: 'bottom', style: 'traditional', wishlist: true },
@@ -178,7 +178,7 @@ describe('item detail', () => {
     expect(router.state.location.pathname).toMatch(/^\/items\//);
 
     await user.click(screen.getByRole('link', { name: 'Back' }));
-    await screen.findByRole('heading', { name: 'My closet' });
+    await screen.findByRole('heading', { name: 'My Closet' });
     expect(await db.items.toArray()).toMatchObject([{ notes: null }]);
   });
 

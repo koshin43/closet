@@ -56,7 +56,7 @@ export function AccessoriesRow({ options, chosen, onChange }: Props) {
         onClose={() => setPicking(false)}
         position="bottom"
         size="80%"
-        title="Choose accessories"
+        title="Choose Accessories"
         radius="md"
       >
         <Stack>

@@ -89,7 +89,7 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
     <Stack gap="lg">
       <Group justify="space-between" align="flex-start">
         <div>
-          <Title order={1}>Let’s get dressed</Title>
+          <Title order={1}>Let’s Get Dressed</Title>
           {outfit && <Text c="dimmed">Editing {outfit.name}</Text>}
         </div>
         <Button variant="default" onClick={shuffle}>
@@ -155,7 +155,7 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
           </Stack>
         </Grid.Col>
       </Grid>
-      <Modal opened={naming !== null} onClose={() => setNaming(null)} title="Name this outfit" centered>
+      <Modal opened={naming !== null} onClose={() => setNaming(null)} title="Name This Outfit" centered>
         {naming && (
           <form onSubmit={save}>
             <Stack>

@@ -15,7 +15,7 @@ export function OutfitsScreen() {
   return (
     <Stack gap="lg">
       <Group justify="space-between" align="baseline">
-        <Title order={1}>My outfits</Title>
+        <Title order={1}>My Outfits</Title>
         <Text c="dimmed" size="sm">
           {outfits.length} {outfits.length === 1 ? 'outfit' : 'outfits'}
         </Text>

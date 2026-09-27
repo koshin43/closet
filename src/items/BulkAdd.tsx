@@ -58,7 +58,7 @@ export function BulkAdd({ wishlist }: { wishlist: boolean }) {
   return (
     <Stack gap="lg">
       <Group justify="space-between" align="baseline">
-        <Title order={1}>{phase.name === 'walk' ? `${phase.index + 1} of ${phase.photos.length}` : 'Add several items'}</Title>
+        <Title order={1}>{phase.name === 'walk' ? `${phase.index + 1} of ${phase.photos.length}` : 'Add Several Items'}</Title>
         <Anchor component={Link} to={back}>
           {phase.name === 'walk' ? 'Done' : 'Cancel'}
         </Anchor>
