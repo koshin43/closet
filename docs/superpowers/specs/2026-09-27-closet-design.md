@@ -25,7 +25,7 @@ Success looks like:
 | Style tag | Every item is Western or Traditional. Traditional wear fits the same slots (blouse = Top, saree/lehenga skirt/salwar = Bottom, kurta = Top, anarkali = One-piece, dupatta = Accessory). |
 | One-pieces | Separate category; when chosen in the outfit builder it replaces both Top and Bottom. |
 | Wishlist | Items can be marked Wishlist. They live in a separate Wishlist area, and appear in the outfit builder with a "wishlist" badge. |
-| Adding items | Single add, plus bulk add (pick many photos, then tag them one after another). |
+| Adding items | One Add Items screen: pick one or many photos, then tag them one after another in a carousel. |
 | Dress-up figure | Explored and rejected. |
 
 ## 3. Visual language
@@ -33,7 +33,7 @@ Success looks like:
 The app reads like a clothing storefront: the photos are the product, and everything around them stays quiet.
 
 - Palette: page `#ffffff`, text `#1f1b18`, muted text `#756c66`, photo backdrop `#f5f2ee`, hairlines `#ebe6e1`, accent terracotta `#e07a5f`. Filled buttons use a deeper terracotta `#c9644a` so white text on them stays readable; the soft tint `#fbe3d8` marks wishlist badges.
-- Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Page titles and dialog titles in Title Case ("My Closet", "Add an Item"); everything else, including buttons, labels and messages, in sentence case; no all-caps labels.
+- Type: the system sans-serif stack. Page titles 28px (32px on laptop), weight 600. Item names 15px regular under the photo, with a muted second line (color name). Page titles, dialog titles, buttons and tappable links in Title Case with every word capitalized ("My Closet", "Add To Closet", "Save And Next"); field labels, badges and messages in sentence case; no all-caps labels.
 - Product cards: every item photo sits in the same 3:4 portrait frame, shown whole (`object-fit: contain`) so nothing is cropped or stretched. The frame is filled with the photo's own background color (see Photos), so every card reads as one uniform photo whatever the original's shape; photos with transparent edges sit on the photo backdrop instead. Every other place a photo appears (builder rows, accessory thumbnails, outfit cards) fills its frame the same way. Cards have no border or shadow; the frame has 8px corners. Badges ("Traditional", "wishlist") sit in the photo's top-left corner.
 - Controls: buttons and filter chips are fully rounded; inputs and photos use 8px corners.
 - One accent only, used for primary buttons, the selected chip and tab, and the add button.
@@ -52,43 +52,42 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 - Slot chips: All, Tops, Bottoms, One-piece, Footwear, Accessories.
 - Style filter beside or under the chips: All / Western / Traditional.
 - Grid of owned items as product cards (2 columns on phone, up to 5 on laptop). A "Traditional" badge on traditional items.
-- Floating "+" button opens Add (with a choice: one photo, or several photos).
+- Floating "+" button opens Add Items directly. On phones it sits above the tab bar, clear of the home-indicator area.
 - Tapping a tile opens Item detail.
-- Empty state: friendly message and a big "Add your first item" button.
+- Empty state: friendly message and a big "Add Your First Item" button that opens Add Items.
 
 ### 5.2 Wishlist
 
 - Same layout, filters and add button as Closet, but only wishlist items.
 - Items added from this screen default to Wishlist.
-- Each tile has a quick "I bought it" action that moves the item into the Closet.
+- Each tile has a quick "I Bought It" action that moves the item into the Closet.
 
-### 5.3 Add item (single)
+### 5.3 Add Items
 
-- Pick one photo from the gallery (or camera, where the browser offers it).
-- Fields:
+One screen, titled "Add Items", adds one item or many.
+
+- Before any photo is picked it shows a "Choose Photos" button that picks one or several photos from the gallery (or camera, where the browser offers it).
+- Right after picking, the app decodes and resizes every file up front, showing progress. Files that cannot be decoded as images are left out, with a message saying how many ("2 files couldn't be read and were left out"). If none are readable, the message is shown and nothing starts.
+- Picked photos sit in a carousel ("Photo 2 of 4"), with an "Add More" slide at the end that picks further photos and appends them. Each unsaved photo has a remove (×) button that drops it. Laptop: carousel on the left, fields on the right; phone: carousel on top, fields below.
+- The fields below belong to the photo currently shown:
   - Name (required, free text, e.g. "red silk saree").
   - Goes in (required): Top / Bottom / One-piece / Footwear / Accessory.
-  - Style (required): Western / Traditional. Defaults to the style of the last item added (single or bulk add; editing an item does not change it), or Western if none has been recorded.
+  - Style (required): Western / Traditional. The first photo starts from the style of the last item added (editing an item does not change it), or Western if none has been recorded.
   - Color (optional): one of a fixed palette (white, off-white, black, grey, beige, brown, red, maroon, pink, orange, yellow, gold, silver, green, blue, navy, purple, multicolor).
   - Notes (optional).
   - Wishlist toggle (defaults on when opened from Wishlist, off otherwise).
-- "Add to closet" / "Add to wishlist" button.
-
-### 5.4 Bulk add
-
-- Pick many photos at once.
-- Right after picking, the app decodes and resizes every file up front, showing progress. Files that cannot be decoded as images are left out, with a message saying how many ("2 files couldn't be read and were left out"). The walkthrough count covers only readable photos. If none are readable, the message is shown and nothing starts.
-- The app walks through them one by one ("3 of 12"): photo on top, the same fields as single add below, then "Save and next". "Skip" drops a photo.
-- The first photo's style starts from the last-added style, as in single add.
-- Slot, style and wishlist carry over from the previous photo to speed up runs of similar items; name is always fresh.
-- Leaving midway keeps what has been saved so far.
+- Items are saved one at a time. The button reads "Save And Next" while other unsaved photos remain, and "Add To Closet" / "Add To Wishlist" on the last one. After a save the carousel moves to the next unsaved photo.
+- Slot, style and wishlist carry over from the last saved photo to the next one; name, color and notes start empty.
+- Saved photos stay in the carousel marked as saved and can no longer be edited or removed there; they are edited from Item detail.
+- When every photo is saved the carousel shows the "Add More" slide with "N items added to your closet" (or wishlist) and a "Done" button back to the list.
+- Leaving midway keeps what has been saved so far; unsaved photos are dropped.
 
 ### 5.5 Item detail / edit
 
-- Laid out like a product page: large photo (left on laptop, top on phone) with the fields and actions beside or below it. All fields editable, "Replace photo".
+- Laid out like a product page: large photo (left on laptop, top on phone) with the fields and actions beside or below it. All fields editable, "Replace Photo".
 - Field edits (name, slot, style, color, notes) are kept only when the user taps "Save". Save is disabled while the name is blank. Leaving with unsaved edits asks "Discard changes?".
-- "Move to closet" / "Move to wishlist", "Replace photo" and Delete act immediately and do not need Save.
-- "Replace photo" takes effect as soon as a new photo is picked: the new photo is stored and the old one deleted in the same transaction. If the picked file cannot be decoded as an image, a clear message is shown and the old photo is kept.
+- "Move To Closet" / "Move To Wishlist", "Replace Photo" and Delete act immediately and do not need Save.
+- "Replace Photo" takes effect as soon as a new photo is picked: the new photo is stored and the old one deleted in the same transaction. If the picked file cannot be decoded as an image, a clear message is shown and the old photo is kept.
 - Shows how many saved outfits use this item.
 - Delete: asks for confirmation; if the item is used in outfits, the warning says how many. After deletion those outfits show an empty placeholder in that slot. Outfits left with no remaining items are deleted along with the item, and the warning says how many outfits that will remove.
 
@@ -96,9 +95,9 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 
 - Title "Let's Get Dressed", a Shuffle button, and the All / Western / Traditional filter.
 - Rows, each swipeable left/right (arrows as well, for laptop):
-  - **Top** — with a "Wear a one-piece instead" link.
+  - **Top** — with a "Wear A One-Piece Instead" link.
   - **Bottom**
-  - In one-piece mode, Top and Bottom merge into a single tall **One-piece** row, with "Back to top + bottom".
+  - In one-piece mode, Top and Bottom merge into a single tall **One-piece** row, with "Back To Top + Bottom".
   - Toggling between the two keeps the picks in the hidden rows for the rest of the session, so switching back restores them. Only the rows on screen are saved.
   - Opening a saved outfit that has a one-piece starts in one-piece mode; otherwise it starts with Top and Bottom.
   - **Footwear**
@@ -108,14 +107,14 @@ The app reads like a clothing storefront: the photos are the product, and everyt
 - Filter narrows every row (e.g. Traditional shows only traditional items). "All" allows mixing (kurta with jeans).
 - Shuffle picks a random item for each non-accessory row within the current filter; accessories are left as they are.
 - Laptop: each row also shows the neighbouring items, and a preview column on the right stacks the current outfit.
-- "Save outfit" (and "Save as new") is disabled until at least one piece is picked; an accessory alone counts.
-- "Save outfit" asks for a name in a dialog (prefilled suggestion such as "Outfit 7"). Opening a saved outfit in the builder and saving again updates it; "Save as new" is also available.
+- "Save Outfit" (and "Save As New") is disabled until at least one piece is picked; an accessory alone counts.
+- "Save Outfit" asks for a name in a dialog (prefilled suggestion such as "Outfit 7"). Opening a saved outfit in the builder and saving again updates it; "Save As New" is also available.
 
 ### 5.7 Outfits
 
 - Grid of saved outfits. Every card has the same 3:4 frame; inside it the item photos stack vertically (top, bottom or one-piece, footwear) sharing the height equally, with accessories as a row of small thumbnails at the bottom. The outfit name sits under the frame.
 - Outfits that include wishlist items show a small "includes wishlist" badge.
-- Tapping a card opens the outfit: full view, "Edit in builder", rename, delete.
+- Tapping a card opens the outfit: full view, "Edit In Builder", rename, delete.
 
 ## 6. Data model
 
@@ -194,7 +193,7 @@ Rules:
 ## 10. Testing
 
 - **Unit (Vitest):** data layer against `fake-indexeddb` (create/update/delete items, wishlist move, outfit save rules, delete-with-references including removal of emptied outfits, photo replacement, rejection of malformed records), image resize helper, shuffle and filter logic.
-- **Component (React Testing Library):** add item, bulk add flow including unreadable files, item edit save and discard, builder one-piece toggle and filter, saving an outfit.
+- **Component (React Testing Library):** add items flow for one and several photos including unreadable files, removing and adding more photos, item edit save and discard, builder one-piece toggle and filter, saving an outfit.
 - **Manual:** install on the owner's Android phone, add real photos, check offline behavior, swipe feel and storage persistence.
 
 ## 11. Out of scope for v1
