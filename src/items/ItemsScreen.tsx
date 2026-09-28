@@ -1,4 +1,4 @@
-import { ActionIcon, Affix, Anchor, Button, Chip, Group, Menu, ScrollArea, SimpleGrid, Stack, Text, Title, useMatches } from '@mantine/core';
+import { ActionIcon, Affix, Anchor, Button, Chip, Group, ScrollArea, SimpleGrid, Stack, Text, Title, useMatches } from '@mantine/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -11,7 +11,10 @@ export function ItemsScreen({ wishlist }: { wishlist: boolean }) {
   const all = useLiveQuery(listItems);
   const [slot, setSlot] = useState<Slot | 'all'>('all');
   const [style, setStyle] = useState<StyleFilterValue>('all');
-  const fabOffset = useMatches({ base: { bottom: 84, right: 20 }, md: { bottom: 32, right: 32 } });
+  const fabOffset = useMatches({
+    base: { bottom: 'calc(84px + env(safe-area-inset-bottom))', right: 20 },
+    md: { bottom: 32, right: 32 },
+  });
   const base = wishlist ? '/wishlist' : '/closet';
 
   if (!all) return null;
@@ -30,7 +33,7 @@ export function ItemsScreen({ wishlist }: { wishlist: boolean }) {
         <Stack align="center" py={64} gap="md">
           <Text c="dimmed">{wishlist ? 'Nothing on your wishlist yet.' : 'Your closet is empty. Let’s fill it up!'}</Text>
           <Button component={Link} to={`${base}/add`} size="lg">
-            Add your first item
+            Add Your First Item
           </Button>
         </Stack>
       ) : (
@@ -58,7 +61,7 @@ export function ItemsScreen({ wishlist }: { wishlist: boolean }) {
                 </Anchor>
                 {wishlist && (
                   <Button variant="light" size="xs" onClick={() => setWishlist(item.id, false)}>
-                    I bought it
+                    I Bought It
                   </Button>
                 )}
               </Stack>
@@ -67,23 +70,18 @@ export function ItemsScreen({ wishlist }: { wishlist: boolean }) {
         </>
       )}
       <Affix position={fabOffset}>
-        <Menu position="top-end" offset={12} hideDetached={false}>
-          <Menu.Target>
-            <ActionIcon size={60} aria-label="Add" variant="filled" style={{ boxShadow: 'var(--mantine-shadow-md)' }}>
-              <svg viewBox="0 0 24 24" width={26} height={26} aria-hidden fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item component={Link} to={`${base}/add`}>
-              One photo
-            </Menu.Item>
-            <Menu.Item component={Link} to={`${base}/bulk`}>
-              Several photos
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+        <ActionIcon
+          component={Link}
+          to={`${base}/add`}
+          size={60}
+          aria-label="Add Items"
+          variant="filled"
+          style={{ boxShadow: 'var(--mantine-shadow-md)' }}
+        >
+          <svg viewBox="0 0 24 24" width={26} height={26} aria-hidden fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </ActionIcon>
       </Affix>
     </Stack>
   );

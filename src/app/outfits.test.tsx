@@ -11,25 +11,25 @@ describe('outfit builder', () => {
     const juttis = await seedItem({ name: 'juttis', slot: 'footwear', style: 'traditional' });
     const { user, router } = renderApp('/style');
 
-    expect(await screen.findByRole('button', { name: 'Save outfit' })).toHaveProperty('disabled', true);
+    expect(await screen.findByRole('button', { name: 'Save Outfit' })).toHaveProperty('disabled', true);
     await user.click(screen.getByRole('button', { name: 'Next Top' }));
     await user.click(screen.getByRole('button', { name: 'Next Bottom' }));
     await user.click(screen.getByRole('button', { name: 'Next Footwear' }));
     expect(currentCard('Top')).toContain('white kurta');
     expect(currentCard('Bottom')).toContain('jeans');
 
-    await user.click(screen.getByRole('button', { name: 'Wear a one-piece instead' }));
+    await user.click(screen.getByRole('button', { name: 'Wear A One-Piece Instead' }));
     expect(screen.queryByRole('region', { name: 'Top' })).toBeNull();
     await user.click(screen.getByRole('button', { name: 'Next One-piece' }));
     expect(currentCard('One-piece')).toContain('anarkali');
     expect(currentCard('One-piece')).toContain('wishlist');
 
-    await user.click(screen.getByRole('button', { name: 'Back to top + bottom' }));
+    await user.click(screen.getByRole('button', { name: 'Back To Top + Bottom' }));
     expect(currentCard('Top')).toContain('white kurta');
-    await user.click(screen.getByRole('button', { name: 'Wear a one-piece instead' }));
+    await user.click(screen.getByRole('button', { name: 'Wear A One-Piece Instead' }));
     expect(currentCard('One-piece')).toContain('anarkali');
 
-    await user.click(screen.getByRole('button', { name: 'Save outfit' }));
+    await user.click(screen.getByRole('button', { name: 'Save Outfit' }));
     expect(screen.getByLabelText('Outfit name')).toHaveProperty('value', 'Outfit 1');
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
@@ -54,7 +54,7 @@ describe('outfit builder', () => {
     expect(within(topRow).queryByText('graphic tee')).toBeNull();
     expect(within(screen.getByRole('region', { name: 'Bottom' })).queryByText('jeans')).toBeNull();
 
-    await user.click(screen.getByRole('button', { name: 'Choose accessories' }));
+    await user.click(screen.getByRole('button', { name: 'Choose Accessories' }));
     const picker = screen.getByRole('dialog', { name: 'Choose Accessories' });
     expect(within(picker).queryByText('cap')).toBeNull();
     await user.click(within(picker).getByRole('checkbox', { name: /dupatta/ }));
@@ -66,7 +66,7 @@ describe('outfit builder', () => {
     expect(currentCard('Bottom')).toContain('None');
     expect(screen.getByRole('button', { name: 'Remove dupatta' })).toBeTruthy();
 
-    await user.click(screen.getByRole('button', { name: 'Save outfit' }));
+    await user.click(screen.getByRole('button', { name: 'Save Outfit' }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await screen.findByRole('heading', { name: 'Outfit 1' });
     expect(await db.outfits.toArray()).toMatchObject([
@@ -80,20 +80,20 @@ describe('outfit builder', () => {
     const id = await seedOutfit({ name: 'Diwali look', onePieceId: anarkali });
     const { user } = renderApp(`/outfits/${id}`);
 
-    await user.click(await screen.findByRole('link', { name: 'Edit in builder' }));
+    await user.click(await screen.findByRole('link', { name: 'Edit In Builder' }));
     expect(await screen.findByText('Editing Diwali look')).toBeTruthy();
     expect(currentCard('One-piece')).toContain('anarkali');
     expect(screen.queryByRole('region', { name: 'Top' })).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Next Footwear' }));
-    await user.click(screen.getByRole('button', { name: 'Save outfit' }));
+    await user.click(screen.getByRole('button', { name: 'Save Outfit' }));
     expect(screen.getByLabelText('Outfit name')).toHaveProperty('value', 'Diwali look');
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await screen.findByRole('heading', { name: 'Diwali look' });
     expect(await db.outfits.toArray()).toMatchObject([{ id, onePieceId: anarkali, footwearId: juttis }]);
 
-    await user.click(screen.getByRole('link', { name: 'Edit in builder' }));
-    await user.click(await screen.findByRole('button', { name: 'Save as new' }));
+    await user.click(screen.getByRole('link', { name: 'Edit In Builder' }));
+    await user.click(await screen.findByRole('button', { name: 'Save As New' }));
     expect(screen.getByLabelText('Outfit name')).toHaveProperty('value', 'Outfit 2');
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await screen.findByRole('heading', { name: 'Outfit 2' });
@@ -112,7 +112,7 @@ describe('outfits', () => {
     const name = screen.getByLabelText('Outfit name');
     await user.clear(name);
     await user.type(name, 'Brunch');
-    await user.click(screen.getByRole('button', { name: 'Save name' }));
+    await user.click(screen.getByRole('button', { name: 'Save Name' }));
     expect(await screen.findByRole('heading', { name: 'Brunch' })).toBeTruthy();
 
     vi.spyOn(window, 'confirm').mockReturnValue(true);
@@ -130,7 +130,7 @@ describe('outfits', () => {
 
     expect(await screen.findByText('Used in 2 saved outfits.')).toBeTruthy();
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
-    await user.click(screen.getByRole('button', { name: 'Delete item' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Item' }));
     expect(confirm).toHaveBeenCalledWith(
       "Delete this item? It's used in 2 outfits. 1 outfit will also be deleted because nothing else is left in it.",
     );
@@ -151,7 +151,7 @@ describe('outfits', () => {
     const { user } = renderApp(`/items/${kurta}`);
     await screen.findByText('Used in 1 saved outfit.');
     vi.spyOn(window, 'confirm').mockReturnValue(false);
-    await user.click(screen.getByRole('button', { name: 'Delete item' }));
+    await user.click(screen.getByRole('button', { name: 'Delete Item' }));
     await waitFor(async () => expect(await db.outfits.count()).toBe(1));
     expect(await db.items.count()).toBe(1);
   });

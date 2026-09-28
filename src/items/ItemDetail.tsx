@@ -26,7 +26,7 @@ export function ItemDetail({ id, ...rest }: Props) {
       <Stack align="flex-start">
         <Text>This item no longer exists.</Text>
         <Anchor component={Link} to="/closet">
-          Back to my closet
+          Back To My Closet
         </Anchor>
       </Stack>
     );
@@ -101,10 +101,10 @@ function ItemEditor({ item, usage, onDelete }: Omit<Props, 'id'> & { item: Item 
             <PhotoFrame>
               <StoredPhoto photoId={item.photoId} size="full" alt={item.name} />
             </PhotoFrame>
-            <FileButton onChange={replace} accept="image/*" inputProps={{ 'aria-label': 'Replace photo' }}>
+            <FileButton onChange={replace} accept="image/*" inputProps={{ 'aria-label': 'Replace Photo' }}>
               {(props) => (
                 <Button {...props} variant="default">
-                  Replace photo
+                  Replace Photo
                 </Button>
               )}
             </FileButton>
@@ -120,10 +120,10 @@ function ItemEditor({ item, usage, onDelete }: Omit<Props, 'id'> & { item: Item 
             <Divider />
             <Stack gap="sm">
               <Button variant="default" onClick={() => setWishlist(item.id, !item.wishlist)}>
-                {item.wishlist ? 'Move to closet' : 'Move to wishlist'}
+                {item.wishlist ? 'Move To Closet' : 'Move To Wishlist'}
               </Button>
               <Button variant="subtle" onClick={remove}>
-                Delete item
+                Delete Item
               </Button>
               {usage && (
                 <Text c="dimmed" size="sm" ta="center">

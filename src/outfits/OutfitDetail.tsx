@@ -18,7 +18,7 @@ export function OutfitDetail({ id }: { id: string }) {
       <Stack align="flex-start">
         <Text>This outfit no longer exists.</Text>
         <Anchor component={Link} to="/outfits">
-          Back to my outfits
+          Back To My Outfits
         </Anchor>
       </Stack>
     );
@@ -63,14 +63,14 @@ export function OutfitDetail({ id }: { id: string }) {
                       Cancel
                     </Button>
                     <Button type="submit" disabled={newName.trim() === ''}>
-                      Save name
+                      Save Name
                     </Button>
                   </Group>
                 </Stack>
               </form>
             )}
             <Button component={Link} to={`/style/${outfit.id}`} size="md">
-              Edit in builder
+              Edit In Builder
             </Button>
             <Group grow>
               <Button variant="default" onClick={() => setNewName(outfit.name)}>

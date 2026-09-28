@@ -24,7 +24,7 @@ export function OutfitsScreen() {
         <Stack align="center" py={64} gap="md">
           <Text c="dimmed">No outfits yet.</Text>
           <Button component={Link} to="/style" size="lg">
-            Let’s get dressed
+            Let’s Get Dressed
           </Button>
         </Stack>
       ) : (

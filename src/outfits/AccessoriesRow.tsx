@@ -41,7 +41,7 @@ export function AccessoriesRow({ options, chosen, onChange }: Props) {
             size={84}
             radius="md"
             variant="default"
-            aria-label="Choose accessories"
+            aria-label="Choose Accessories"
             style={{ borderStyle: 'dashed', flex: 'none' }}
             onClick={() => setPicking(true)}
           >

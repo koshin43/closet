@@ -3,6 +3,5 @@ export { itemTable, listItems, removeItemAndPhoto } from './itemStore';
 export { matchesStyle, StyleFilter, type StyleFilterValue } from './StyleFilter';
 export { ItemCard } from './ItemCard';
 export { ItemsScreen } from './ItemsScreen';
-export { AddItem } from './AddItem';
-export { BulkAdd } from './BulkAdd';
+export { AddItems } from './AddItems';
 export { ItemDetail, type OutfitUsage } from './ItemDetail';

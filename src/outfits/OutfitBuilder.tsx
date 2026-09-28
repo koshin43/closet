@@ -22,7 +22,7 @@ export function OutfitBuilder({ outfitId }: { outfitId: string | undefined }) {
       <Stack align="flex-start">
         <Text>This outfit no longer exists.</Text>
         <Anchor component={Link} to="/style">
-          Start a new outfit
+          Start A New Outfit
         </Anchor>
       </Stack>
     );
@@ -109,7 +109,7 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
                 onChange={pick('onepiece')}
                 action={
                   <Anchor component="button" size="sm" onClick={() => setOnePiece(false)}>
-                    Back to top + bottom
+                    Back To Top + Bottom
                   </Anchor>
                 }
               />
@@ -122,7 +122,7 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
                   onChange={pick('top')}
                   action={
                     <Anchor component="button" size="sm" onClick={() => setOnePiece(true)}>
-                      Wear a one-piece instead
+                      Wear A One-Piece Instead
                     </Anchor>
                   }
                 />
@@ -145,11 +145,11 @@ function Builder({ items, outfit, outfitCount }: { items: Item[]; outfit: Outfit
               )}
             </Box>
             <Button size="md" disabled={!canSave} onClick={() => setNaming({ asNew: false, name: outfit?.name ?? suggestion })}>
-              Save outfit
+              Save Outfit
             </Button>
             {outfit && (
               <Button variant="default" size="md" disabled={!canSave} onClick={() => setNaming({ asNew: true, name: suggestion })}>
-                Save as new
+                Save As New
               </Button>
             )}
           </Stack>
