@@ -8,11 +8,12 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
+        id: 'closet',
         name: 'Closet',
         short_name: 'Closet',
         description: 'Your clothes, wishlist and outfits, on this device.',
         display: 'standalone',
-        start_url: '.',
+        start_url: './',
         background_color: '#ffffff',
         theme_color: '#ffffff',
         icons: [
